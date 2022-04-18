@@ -50,11 +50,12 @@ func main() {
 
 		var query string
 		if isSafe {
-			query = `SELECT product_id, product_name, product_desc, price FROM products WHERE product_name like '%?%'`
+			query = `SELECT product_id, product_name, product_desc, price FROM products WHERE product_name like ?`
+			err = db.Select(&products, query, "%"+productName+"%")
 		} else {
 			query = `SELECT product_id, product_name, product_desc, price FROM products WHERE product_name like '%` + productName + `%'`
+			err = db.Select(&products, query)
 		}
-		err = db.Select(&products, query)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"message": fmt.Sprintf("error when get products %s", err.Error()),
